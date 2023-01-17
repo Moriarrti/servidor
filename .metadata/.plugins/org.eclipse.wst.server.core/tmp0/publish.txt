@@ -1,0 +1,6 @@
+#Tomcat publish data
+#Tue Jan 17 10:58:52 CET 2023
+org.eclipse.jst.jee.server\:SesionesEjercicio1=C\:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\wtpwebapps\\SesionesEjercicio1
+org.eclipse.jst.jee.server\:Ejercicio3=C\:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\wtpwebapps\\Ejercicio3
+org.eclipse.jst.jee.server\:SesionesEjercicio0=C\:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\wtpwebapps\\SesionesEjercicio0
+org.eclipse.jst.jee.server\:EjerciciosIniciacion=C\:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\wtpwebapps\\EjerciciosIniciacion
