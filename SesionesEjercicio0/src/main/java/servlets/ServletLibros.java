@@ -16,7 +16,7 @@ import beans.Catalogo;
 public class ServletLibros extends HttpServlet {
 
 	/**
-	 * 
+	 * A
 	 */
 	private static final long serialVersionUID = 1L;
 	ArrayList<String> catalogoLibros = new ArrayList<String>();
