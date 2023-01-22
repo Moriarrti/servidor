@@ -46,7 +46,7 @@ public class ServletNuevaCuenta extends HttpServlet {
 				response.sendRedirect("nuevacuenta.jsp?error=" + errorMsg);
 			}
 			else if(saldoInicial <= 0) {
-				errorMsg = "El saldo inicial debe ser un numero positivo";
+				errorMsg = "El saldo inicial debe ser mayor que cero";
 				response.sendRedirect("nuevacuenta.jsp?error=" + errorMsg);
 			}
 			else if(CLIENTES_VETADOS.contains(titular)) {
