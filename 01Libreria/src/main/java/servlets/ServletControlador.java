@@ -43,6 +43,7 @@ public class ServletControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	request.getSession().invalidate();
         request.getSession().setAttribute("libros", bd.libros());
         request.getSession().setAttribute("autores", bd.autores());
         request.getRequestDispatcher("index.jsp").forward(request, response);
@@ -60,6 +61,7 @@ public class ServletControlador extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //Para evitar problemas con caracteres especiales
+ 
         request.setCharacterEncoding("UTF-8");
         if(request.getParameter("insertar") == null){
             doGet(request, response);

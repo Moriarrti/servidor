@@ -38,5 +38,7 @@
         <p>${errorinsercion}</p>
         <br>
         <a href="autores.jsp">VER AUTORES</a>
+        <br>
+        <a href="devoluciones.jsp">VER DEVOLUCIONES</a>
     </body>
 </html>

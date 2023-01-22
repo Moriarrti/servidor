@@ -10,38 +10,48 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.sql.DataSource;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 
 import beans.Autor;
 import beans.Libro;
 
+
 /**
  *
  * @author Amaia
  */
 public class GestorBD {
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://localhost:3306/biblioteca?zeroDateTimeBehavior=CONVERT_TO_NULL";
-    private static final String USER = "root";
-    private static final String PASS = "";
-    private static BasicDataSource dataSource;
 
-    public GestorBD() {
-        //Creamos el pool de conexiones
-        dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(DRIVER);
-        dataSource.setUrl(URL);
-        dataSource.setUsername(USER);
-        dataSource.setPassword(PASS);
-        //Indicamos el tamaño del pool de conexiones
-        dataSource.setInitialSize(50);
-    }
+    private static DataSource dataSource;
+
+	public GestorBD() {
+		try {
+			InitialContext ctx = new InitialContext();
+			Context env = (Context) ctx.lookup("java:comp/env");
+			// nombre del recurso en el context.xml
+			dataSource = (DataSource) env.lookup("jdbc/poolBibliotecaDB");
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+	}
+    
+
     
     public ArrayList<Libro> libros(){
         ArrayList<Libro> libros = new ArrayList<Libro>();
@@ -171,7 +181,6 @@ public class GestorBD {
             	String titulo = rs.getString("titulo");
             	libro.setTitulo(titulo);
             	libro.setIdLibro(id);
-            	System.out.println(libro.toString());
             	libros.add(libro);
             }
             rs.close();
@@ -261,8 +270,83 @@ public class GestorBD {
 		}
     	return mensaje;
     }
+    
+    
+    private String getDiasPrestamo(Date fechaPrestamo) {
+    	String diasPrestado = "";
+    	
+    	Date diaHoy = new Date();
+ 
+        long diff = diaHoy.getTime() - fechaPrestamo.getTime();
+
+        TimeUnit time = TimeUnit.DAYS; 
+        long diffrence = time.convert(diff, TimeUnit.MILLISECONDS);
+        diasPrestado = diffrence + " dias prestado";
+    	return diasPrestado;
+    }
+    
+    
+    public LinkedHashMap<Libro, String> obtenerLibrosPrestados(){
+    	LinkedHashMap<Libro, String> prestamos = new LinkedHashMap<Libro, String>();
+    	String sql = "select idlibro, fecha, titulo from prestamo inner join libro on idlibro = libro.id group by idlibro order by fecha;";
+    	
+    	try {
+            Connection con = dataSource.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+            	Libro libro = new Libro();
+            	String titulo = rs.getString("titulo");
+            	int idLibro = rs.getInt("id");
+            	Date fecha = rs.getDate("fecha");
+            	String diasPrestado = getDiasPrestamo(fecha);
+            	libro.setTitulo(titulo);
+            	libro.setIdLibro(idLibro);
+            	prestamos.put(libro, diasPrestado);
+            }
+            rs.close();
+            st.close();
+            con.close();       
+		} catch (SQLException e) {
+			System.err.println("Error en metodo librosDelAutor " );
+		}
+    	
+    	return prestamos;
+    }
+//    Connection con = dataSource.getConnection();
+//    Statement st = con.createStatement();
+//    ResultSet rs = st.executeQuery(sql);
+//    while(rs.next()){
+//        Libro libro = new Libro(rs.getInt("id"), rs.getString("titulo"),
+//                                rs.getInt("paginas"), rs.getString("genero"), 
+//                                rs.getInt("idAutor"));
+//        libros.add(libro);
+//    }
+//    rs.close();
+//    st.close();
+//    con.close();
+    
+
+    public void devolverLibros(ArrayList<Integer> listaLibros) {
+    	String sql = "delete from prestamo where idlibro=?" ;
+    	try {
+    		for(Integer id: listaLibros) {
+    			Connection con = dataSource.getConnection();
+    			PreparedStatement st = con.prepareStatement(sql);
+    			st.setInt(1, id);
+    			st.executeUpdate();
+    			st.close();
+    			con.close();
+    		}
+    		
+    	} catch (SQLException e) {
+    		System.err.println("Error en metodo devolverLibros" );
+    	}
+    }
 
 }
+
+
 //private int idLibro;
 //private String titulo;
 //private int paginas;
