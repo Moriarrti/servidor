@@ -23,8 +23,9 @@ public class ServletDevolver extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private GestorBD bd;
     private ArrayList<Integer> librosDevolver = new ArrayList<Integer>();
-  
-    HttpSession session;
+    private HttpSession session;
+    
+    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -43,12 +44,12 @@ public class ServletDevolver extends HttpServlet {
 			session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
 		}
 		
-		LinkedHashMap<Libro, String> i = bd.obtenerLibrosPrestados();
-		for(Libro lib: i.keySet()) {
-			System.out.println(lib);
-			System.out.println(i.get(lib));
-			System.out.println("-----------");
-		}
+//		LinkedHashMap<Libro, String> i = bd.obtenerLibrosPrestados();
+//		for(Libro lib: i.keySet()) {
+//			System.out.println(lib);
+//			System.out.println(i.get(lib));
+//			System.out.println("-----------");
+//		}
 		
 		if(session.getAttribute("librosDevolver") == null) {
 			session.setAttribute("librosDevolver", new ArrayList<Integer>());
@@ -72,24 +73,12 @@ public class ServletDevolver extends HttpServlet {
 			librosDevolver = (ArrayList<Integer>) session.getAttribute("librosDevolver");
 			bd.devolverLibros(librosDevolver);
 			session.invalidate();
+			session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
 			session.setAttribute("librosDevolver", new ArrayList<Integer>());
 		}
-		session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
 		response.sendRedirect("devoluciones.jsp");
 	}
 
 	
 	
-//	@Override
-//	public void init(ServletConfig config) throws ServletException {
-//		super.init(config);
-//		try {
-//				InitialContext ctx = new InitialContext();
-//				Context env = (Context) ctx.lookup("java:comp/env");
-//				// nombre del recurso en el context.xml
-//				ds = (DataSource) env.lookup("jdbc/poolSubastasDB");
-//		} catch (NamingException e) {
-//			e.printStackTrace();
-//		}
-//	}
 }
