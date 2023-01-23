@@ -10,7 +10,7 @@
 </head>
 <body>
 	<c:if test="${autoresCompletos == null}">
-		<jsp:forward page="ServletAutores"></jsp:forward>
+		<jsp:forward page="ServletAutores"/>
 	</c:if>
 	<h1>Lista de Autores</h1>
 	<table>
@@ -20,14 +20,14 @@
 			<th>Nacionalidad</th>
 			<th>Ver libros</th>
 		</tr>
-			<c:forEach items="${autoresCompletos.keySet() }" var="idAutor">
+			<c:forEach items="${autoresCompletos}" var="autor">
 		<tr>
-  			<td>${autoresCompletos.get(idAutor).getNombre()}</td>  
+  			<td>${autor.getNombre()}</td>  
   			<td>
-  				<fmt:formatDate value="${autoresCompletos.get(idAutor).getFechanac()}" pattern="yyyy/MM/dd"/>
+  				<fmt:formatDate value="${autor.getFechanac()}" pattern="yyyy/MM/dd"/>
   			</td>
-			<td>${autoresCompletos.get(idAutor).getNacionalidad()}</td>  
-			<td><a href="ServletAutores?idAutorLibros=${idAutor}&nomAutorLibros=${autoresCompletos.get(idAutor).getNombre()}">Ver libros</a></td>
+			<td>${autor.getNacionalidad()}</td>  
+			<td><a href="ServletAutores?idAutorLibros=${autor.getIdAutor()}">Ver libros</a></td>
 			
 		</tr>
 			</c:forEach>

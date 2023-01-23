@@ -145,8 +145,8 @@ public class GestorBD {
         return id;
     }
     
-    public LinkedHashMap<Integer, Autor> getAutoresCompletos(){
-    	LinkedHashMap<Integer, Autor> autores = new LinkedHashMap<Integer, Autor>();
+    public ArrayList< Autor> getAutoresCompletos(){
+    	ArrayList< Autor> autores = new ArrayList<Autor>();
     	String sql = "Select * from autor";
     	try {
             Connection con = dataSource.getConnection();
@@ -154,11 +154,11 @@ public class GestorBD {
             ResultSet rs = st.executeQuery(sql);
             while(rs.next()){
             	Autor autor = new Autor();
+            	autor.setIdAutor(rs.getInt("id"));
             	autor.setNombre(rs.getString("nombre"));
-            	
             	autor.setFechanac(rs.getDate("fechanac"));
             	autor.setNacionalidad(rs.getString("nacionalidad"));
-                autores.put(rs.getInt("id"), autor);
+                autores.add(autor);
             }
             rs.close();
             st.close();
@@ -167,6 +167,25 @@ public class GestorBD {
 			System.err.println("Error en metodo getAutoresCompletos");
 		}
     	return autores;
+    }
+    
+    public String getNombreAutor(int id) {
+    	String nombre = "";
+    	String sql = "select nombre from autor where id=" + id;
+    	try {
+            Connection con = dataSource.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            if(rs.next()){
+            	nombre = rs.getString("nombre");
+            }
+            rs.close();
+            st.close();
+            con.close();       
+		} catch (SQLException e) {
+			System.err.println("Error en metodo getNombreAutor " + id);
+		}
+    	return nombre;
     }
     
     public ArrayList<Libro> librosDelAutor(int id){
@@ -289,7 +308,6 @@ public class GestorBD {
     public LinkedHashMap<Libro, String> obtenerLibrosPrestados(){
     	LinkedHashMap<Libro, String> prestamos = new LinkedHashMap<Libro, String>();
     	String sql = "select idlibro, fecha, titulo from prestamo inner join libro on idlibro = libro.id group by idlibro order by fecha;";
-    	
     	try {
             Connection con = dataSource.getConnection();
             Statement st = con.createStatement();
@@ -297,34 +315,22 @@ public class GestorBD {
             while(rs.next()){
             	Libro libro = new Libro();
             	String titulo = rs.getString("titulo");
-            	int idLibro = rs.getInt("id");
-            	Date fecha = rs.getDate("fecha");
-            	String diasPrestado = getDiasPrestamo(fecha);
+            	int idLibro = rs.getInt("idlibro");
             	libro.setTitulo(titulo);
             	libro.setIdLibro(idLibro);
+            	Date fecha = rs.getDate("fecha");
+            	String diasPrestado = getDiasPrestamo(fecha);
             	prestamos.put(libro, diasPrestado);
             }
             rs.close();
             st.close();
             con.close();       
 		} catch (SQLException e) {
-			System.err.println("Error en metodo librosDelAutor " );
+			System.err.println("Error en metodo obtenerLibrosPrestados" );
 		}
-    	
     	return prestamos;
     }
-//    Connection con = dataSource.getConnection();
-//    Statement st = con.createStatement();
-//    ResultSet rs = st.executeQuery(sql);
-//    while(rs.next()){
-//        Libro libro = new Libro(rs.getInt("id"), rs.getString("titulo"),
-//                                rs.getInt("paginas"), rs.getString("genero"), 
-//                                rs.getInt("idAutor"));
-//        libros.add(libro);
-//    }
-//    rs.close();
-//    st.close();
-//    con.close();
+
     
 
     public void devolverLibros(ArrayList<Integer> listaLibros) {

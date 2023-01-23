@@ -21,8 +21,8 @@ import dao.GestorBD;
 @WebServlet("/ServletAutores")
 public class ServletAutores extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
 	private GestorBD bd;
+
     
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -43,9 +43,10 @@ public class ServletAutores extends HttpServlet {
 		session.setAttribute("autoresCompletos", bd.getAutoresCompletos());
 		HashMap<String, ArrayList<Libro>> autorLibros = new HashMap<String, ArrayList<Libro>>();
 		String errAniadir = "";
+		
 		if(request.getParameter("idAutorLibros") != null) {
 			int id = Integer.parseInt(request.getParameter("idAutorLibros"));
-			String nombre = request.getParameter("nomAutorLibros");
+			String nombre = bd.getNombreAutor(id);
 			ArrayList<Libro> librosAutor = bd.librosDelAutor(id);
 			autorLibros.put(nombre, librosAutor);
 			session.setAttribute("librosAutor", autorLibros);
@@ -66,7 +67,9 @@ public class ServletAutores extends HttpServlet {
 			}
 			else {
 				String msgAniadirAutor = bd.insertarAutor(nombre, fecha, nacionalidad);
+				session.setAttribute("autoresCompletos", bd.getAutoresCompletos());
 				session.setAttribute("msgAniadirAutor", msgAniadirAutor);
+				
 			}
 			
 		}

@@ -15,9 +15,7 @@ import javax.servlet.http.HttpSession;
 import beans.Libro;
 import dao.GestorBD;
 
-/**
- * Servlet implementation class ServletDevolver
- */
+
 @WebServlet("/ServletDevolver")
 public class ServletDevolver extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -44,12 +42,6 @@ public class ServletDevolver extends HttpServlet {
 			session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
 		}
 		
-//		LinkedHashMap<Libro, String> i = bd.obtenerLibrosPrestados();
-//		for(Libro lib: i.keySet()) {
-//			System.out.println(lib);
-//			System.out.println(i.get(lib));
-//			System.out.println("-----------");
-//		}
 		
 		if(session.getAttribute("librosDevolver") == null) {
 			session.setAttribute("librosDevolver", new ArrayList<Integer>());
@@ -61,6 +53,7 @@ public class ServletDevolver extends HttpServlet {
 			librosDevolver = (ArrayList<Integer>) session.getAttribute("librosDevolver");
 			librosDevolver.add(libroDev);
 			session.setAttribute("librosDevolver", librosDevolver);
+			
 		}
 		
 		if(request.getParameter("revertirLibro") != null) {
@@ -72,10 +65,10 @@ public class ServletDevolver extends HttpServlet {
 		if(request.getParameter("grabar") != null) {
 			librosDevolver = (ArrayList<Integer>) session.getAttribute("librosDevolver");
 			bd.devolverLibros(librosDevolver);
-			session.invalidate();
-			session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
+//			session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
 			session.setAttribute("librosDevolver", new ArrayList<Integer>());
 		}
+		session.setAttribute("librosPrestados", bd.obtenerLibrosPrestados());
 		response.sendRedirect("devoluciones.jsp");
 	}
 
